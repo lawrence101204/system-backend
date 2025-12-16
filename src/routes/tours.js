@@ -2,17 +2,15 @@ const express = require('express');
 const router = express.Router();
 const c = require('../controllers/toursController');
 const v = require('../validators/tourValidators');
+const protect = require('../middlewares/authMiddleware');
 
-/**
- * @openapi
- * /tours:
- *   get:
- *     summary: List tours (pagination + price filters)
- */
+// ✅ PUBLIC ROUTES (CLIENT)
 router.get('/', v.validateToursListQuery, c.list);
-router.post('/', v.validateTourCreate, c.create);
 router.get('/:id', v.validateTourId, c.get);
-router.put('/:id', v.validateTourUpdate, c.update);
-router.delete('/:id', v.validateTourId, c.remove);
+
+// 🔒 ADMIN ROUTES
+router.post('/', protect, v.validateTourCreate, c.create);
+router.put('/:id', protect, v.validateTourUpdate, c.update);
+router.delete('/:id', protect, v.validateTourId, c.remove);
 
 module.exports = router;

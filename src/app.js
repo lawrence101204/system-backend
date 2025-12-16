@@ -13,22 +13,35 @@ const config = require('./config');
 
 const app = express();
 
-app.use(requestId); // ✅ correct usage (do not call requestId())
-app.use(logger());
+// ======================
+// Global Middlewares
+// ======================
+app.use(requestId);          // middleware function ✔
+app.use(logger());           // logger factory ✔
 app.use(helmet());
 
 app.use(
   cors({
-    origin: config.corsOrigins.length ? config.corsOrigins : true,
+    origin: config.corsOrigins?.length ? config.corsOrigins : true,
     credentials: true,
   })
 );
 
 app.use(express.json({ limit: '1mb' }));
 
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// ======================
+// Swagger (BEFORE routes)
+// ======================
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// ======================
+// API Routes
+// ======================
 app.use('/api', routes);
 
+// ======================
+// Error Handling (LAST)
+// ======================
 app.use(notFound);
 app.use(errorHandler);
 

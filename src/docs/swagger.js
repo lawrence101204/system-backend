@@ -8,3 +8,4 @@ module.exports = swaggerJSDoc({
   },
   apis: ['./src/routes/*.js'],
 });
+
